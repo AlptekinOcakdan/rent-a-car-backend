@@ -32,17 +32,9 @@ namespace Core.CrossCuttingConcerns.Caching.Microsoft {
         }
 
         public void RemoveByPattern(string pattern) {
-            var cacheEntriesCollectionDefinition = typeof(MemoryCache).GetProperty("EntriesCollection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var cacheEntriesCollection = cacheEntriesCollectionDefinition.GetValue(_memoryCache) as dynamic;
-            List<ICacheEntry> cacheCollectionValues = new List<ICacheEntry>();
-
-            foreach (var cacheItem in cacheEntriesCollection) {
-                ICacheEntry cacheItemValue = cacheItem.GetType().GetProperty("Value").GetValue(cacheItem, null);
-                cacheCollectionValues.Add(cacheItemValue);
-            }
-
+            // The private EntriesCollection property used here before no longer exists on .NET 7+ (NullReferenceException); MemoryCache.Keys is public since .NET 9
             var regex = new Regex(pattern, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var keysToRemove = cacheCollectionValues.Where(d => regex.IsMatch(d.Key.ToString())).Select(d => d.Key).ToList();
+            var keysToRemove = ((MemoryCache)_memoryCache).Keys.Where(k => regex.IsMatch(k.ToString())).ToList();
 
             foreach (var key in keysToRemove) {
                 _memoryCache.Remove(key);

@@ -39,6 +39,7 @@ namespace Business.Concrete
             {
                 return businessResult;
             }
+            _brandDal.Add(brand);
             return new SuccessResult(Messages.BrandAdded);
         }
 

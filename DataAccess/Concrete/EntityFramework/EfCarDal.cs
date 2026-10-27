@@ -19,7 +19,9 @@ namespace DataAccess.Concrete.EntityFramework
                              {
                                  Id = car.Id,
                                  BrandId = car.BrandId,
+                                 BrandName = brand.Name,
                                  ColorId = car.ColorId,
+                                 ColorName = color.Name,
                                  Description = car.Description,
                                  DailyPrice = car.DailyPrice,
                                  ModelYear = car.ModelYear,
@@ -53,7 +55,9 @@ namespace DataAccess.Concrete.EntityFramework
                              {
                                  Id = car.Id,
                                  BrandId = car.BrandId,
+                                 BrandName = brand.Name,
                                  ColorId = car.ColorId,
+                                 ColorName = color.Name,
                                  Description = car.Description,
                                  DailyPrice = car.DailyPrice,
                                  ModelYear = car.ModelYear,

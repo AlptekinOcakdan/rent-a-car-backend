@@ -10,7 +10,8 @@ namespace DataAccess.Concrete.EntityFramework
             // wsl hostname -I ile ip al
             // dotnet ef migrations add InitialCreate
             // dotnet ef database update 
-            string connectionString = "Server=172.19.194.83,1433;Database=RentCar;User Id=sa;Password=Alptekin2026_SA;TrustServerCertificate=True;Encrypt=False;Connection Timeout=30;";
+            // RENTACAR_CONNECTION_STRING overrides the default for local/Docker setups
+            string connectionString = Environment.GetEnvironmentVariable("RENTACAR_CONNECTION_STRING") ?? "Server=172.19.194.83,1433;Database=RentCar;User Id=sa;Password=Alptekin2026_SA;TrustServerCertificate=True;Encrypt=False;Connection Timeout=30;";
     
             optionsBuilder.UseSqlServer(connectionString, options =>
                 options.EnableRetryOnFailure(
@@ -19,6 +20,13 @@ namespace DataAccess.Concrete.EntityFramework
                     errorNumbersToAdd: null
                 )
             );
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Customer.Id is the owning User.Id (set in UserManager.Add) and NationalIdentity is filled in later from the profile page
+            modelBuilder.Entity<Customer>().Property(c => c.Id).ValueGeneratedNever();
+            modelBuilder.Entity<Customer>().Property(c => c.NationalIdentity).IsRequired(false);
         }
 
         public DbSet<Car> Cars { get; set; }
